@@ -1,0 +1,26 @@
+{
+    "id": "B6D08861",
+    "path": "~/Professional Work/onmaRg/R/hello.R",
+    "project_path": "R/hello.R",
+    "type": "r_source",
+    "hash": "709821675",
+    "contents": "",
+    "dirty": true,
+    "created": 1659553530252.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "8,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1659557569,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1659557656204,
+    "read_only": false,
+    "read_only_alternatives": []
+}
