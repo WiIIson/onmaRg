@@ -7,23 +7,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This is the library onmaRg
+This is the onmaRg library
 
-It has a very important function called "hello"
+It is primarily used to quickly and easily load Ontario Marginalization data:
 
 ```{r}
-library(tidyverse)    # Data cleaning functions
-library(readxl)       # Loading data from Excel
-library(httr)         # Read data from URL
-library(sf)           # Spatial features package to read shape files
-library(RColorBrewer) # Colour palettes for the map
-library(leaflet)      # Street maps
-library(shiny)        # Shiny dashboard
-
-
-
 library(onmaRg)
+library(ggplot2)
+library(sf)
 
-hello()
-OnMarg_16 <- shapeMarg(2016, "DAUID")
+OnMarg_16_DA <- om_data(2016, "DAUID")
+
+OnMarg_16_DA <- om_geo(2016, "DAUID")
+
 ```

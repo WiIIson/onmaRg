@@ -1,0 +1,8 @@
+"0",""
+"0","# Get the dataset of gender by name"
+"0","wgnd <- read.csv(""C:/Users/willi/Documents/Professional Work/wgnd.csv"") %>%"
+"0","  rename(""First.Name""=""name"")"
+"0",""
+"0","# Merge the two datasets"
+"0","sunshine_gender <- merge(sunshine_data, wgnd, by=""First.Name"")"
+"0",""
