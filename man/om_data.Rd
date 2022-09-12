@@ -2,7 +2,7 @@
 % Please edit documentation in R/om_data.R
 \name{om_data}
 \alias{om_data}
-\title{Load Public Health Ontario data}
+\title{Load OnMarg data}
 \usage{
 om_data(year, level)
 }
@@ -11,12 +11,15 @@ om_data(year, level)
 
 \item{level}{The level of precision to load, this can be "DAUID", "CTUID", "CSDUID", "CCSUID", "CDUID", "CMAUID", "PHUUID", "LHINUID", or "LHIN_SRUID"}
 }
+\value{
+A dataframe containing the Marginalization Index for every geographic identifier
+}
 \description{
-This is a function for loading the Public Health Ontario OnMarg data into a dataframe
+This function loads Public Health Ontario's Ontario Marginalization Index data into a dataframe which includes geographic variables (e.g. DA labels, CSD labels) and associated values for the four OnMarg domains of Instability, Material Deprivation, Dependency and Ethnic Concentration.
+}
+\details{
+If the data file is unable to be downloaded, an error message will be produced.
 }
 \examples{
-DA_2016 <- om_phodata(2016, "DAUID")
-DA_2011 <- om_phodata(2011, "DAUID")
-CSD_2016 <- om_phodata(2016, "CSDUID")
-CSD_2011 <- om_phodata(2011, "CSDUID")
+DA_2016_data <- om_data(2016, "DAUID")
 }

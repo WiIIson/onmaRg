@@ -1,0 +1,8 @@
+library(onmaRg)
+library(ggplot2)
+
+DA_2016 <- om_geo(2016, "DAUID") %>%
+  filter(CSDNAME == "Toronto")
+
+ggplot() +
+  geom_sf(data=DA_2016, aes(fill=ETHNICCON_Q_DA16))

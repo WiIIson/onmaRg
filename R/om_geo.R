@@ -1,15 +1,14 @@
-#' Load OnMarg data
+globalVariables(c("geometry"))
+
+#' Load OnMarg spatial data
 #'
-#' This is a function for loading OnMarg data into an sf object for spatial analysis.
+#' This function combines Public Health Ontario's Ontario Marginalization Index data with Statistics Canada's shape files to create an sf_object.  The sf_object can be used for mapping with packages such as ggplot, and for spatial analysis.
 #'
 #' If a year or level is used that does not exist or is not implemented, an error message will be produced.
+#' If the geometry file is unable to be downloaded, an error message will be produced.
 #' @param year Integer year of data to load
 #' @param level The level of precision to load, this can be "DAUID", "CTUID", "CSDUID", "CCSUID", "CDUID", "CMAUID", "PHUUID", "LHINUID", or "LHIN_SRUID"
-#' @examples
-#' DA_2016 <- om_geo(2016, "DAUID")
-#' DA_2011 <- om_geo(2011, "DAUID")
-#' CSD_2016 <- om_geo(2016, "CSDUID")
-#' CSD_2011 <- om_geo(2011, "CSDUID")
+#' @return A sf object containing the Marginalization Index and geographic boundaries for every geographic identifier
 #' @import dplyr
 #' @import httr
 #' @import readxl
@@ -17,6 +16,11 @@
 #' @import stringr
 #' @import utils
 #' @export
+#' @examples
+#' \donttest{
+#' DA_2016_geo <- om_geo(2016, "DAUID")
+#' }
+
 om_geo <- function(year, level) {
   # Initial setup
   year <- toString(year)
@@ -84,7 +88,11 @@ om_geo <- function(year, level) {
 
     filename <- getFileName(url)
 
-    download.file(url, tempFile, quiet=TRUE, mode="wb")
+    tryCatch(
+      download.file(url, tempFile, quiet=TRUE, mode="wb"),
+      # Creates an error if the file is unable to download
+      error = function(e) stop("Geography file was unable to be downloaded")
+    )
 
     extensions <- c(".shp", ".dbf", ".prj", ".shx")
     for (extension in extensions) {

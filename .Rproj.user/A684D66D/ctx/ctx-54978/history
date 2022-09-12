@@ -1,0 +1,512 @@
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=800)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- ggplot(data=sg_gend_avg, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+})
+}
+shinyApp(ui, server)
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=800)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+ggplot(data=sg_gend_avg, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+)
+})
+}
+shinyApp(ui, server)
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=600)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+ggplot(data=sg_gend_avg, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+)
+})
+}
+shinyApp(ui, server)
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+return(working_data)
+}
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=600)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+observeEvent(input$Division, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+}
+shinyApp(ui, server)
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+# Generates the plot
+if(division=="none") {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries)) +
+geom_bar(stat="identity")
+}
+else {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+}
+return(plot)
+}
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=600)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+observeEvent(input$Division, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+}
+shinyApp(ui, server)
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+print(working_data)
+# Generates the plot
+if(division=="none") {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries)) +
+geom_bar(stat="identity")
+}
+else {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+}
+return(plot)
+}
+get_data("sum", "none")
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_data %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+working_data <- data.frame(working_data)
+print(working_data)
+# Generates the plot
+if(division=="none") {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries)) +
+geom_bar(stat="identity")
+}
+else {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+}
+return(plot)
+}
+get_data("sum", "none")
+get_data("num", "none")
+get_data("num", "gender")
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_gender %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_gender %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+working_data <- data.frame(working_data)
+print(working_data)
+# Generates the plot
+if(division=="none") {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries)) +
+geom_bar(stat="identity")
+}
+else {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+}
+return(plot)
+}
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=600)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+observeEvent(input$Division, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+}
+shinyApp(ui, server)
+get_data <- function(method, division) {
+# Determines the division of the data
+if (division=="none") {
+working_data <- sunshine_gender %>%
+group_by(Calendar.Year)
+}
+else if (division=="gender") {
+working_data <- sunshine_gender %>%
+group_by(Calendar.Year, gender)
+}
+# Determines the statistic to report
+if (method=="num") {
+working_data <- working_data %>%
+summarise(entries=n())
+}
+else if (method=="avg") {
+working_data <- working_data %>%
+summarise(entries=mean(Salary.Paid))
+}
+else if (method=="max") {
+working_data <- working_data %>%
+summarise(entries=max(Salary.Paid))
+}
+working_data <- data.frame(working_data)
+print(working_data)
+# Generates the plot
+if(division=="none") {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries)) +
+geom_bar(stat="identity")
+}
+else {
+plot <- ggplot(data=working_data, aes(x=Calendar.Year, y=entries, fill=gender)) +
+geom_bar(stat="identity", position="fill") +
+geom_hline(yintercept=0.5)
+}
+return(plot)
+}
+ui <- fluidPage(
+titlePanel("Sunshine List Member Data"),
+fluidRow(
+column(3,
+radioButtons(
+"Stat_Display",
+"Statistic Shown",
+c(
+"Count"="num",
+"Average"="avg",
+"Maximum"="max"
+)
+),
+radioButtons(
+"Division",
+"Division",
+c(
+"Overall"="none",
+"Gender"="gender"
+)
+)
+)
+),
+fluidRow(
+plotOutput("Sunshine_Display", height=600)
+)
+)
+server <- function(input, output, session) {
+observeEvent(input$Stat_Display, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+observeEvent(input$Division, {
+output$Sunshine_Display <- renderPlot(
+get_data(input$Stat_Display, input$Division)
+)
+})
+}
+shinyApp(ui, server)
+library(onmaRg)
+devtools::check_win_devel()
+use_cran_comments()
+?use_cran_comments
+usethis::use_cran_comments(open = rlang::is_interactive())
+library(onmaRg)
+devtools::check_win_devel()
+library(onmaRg)
+devtools::check_win_devel()
+.Last.error
+library(onmaRg)
+OnMarg_16_DA_df <- om_data(2016, "DAUID")
+OnMarg_16_DA_sf <- om_geo(2016, "DAUID")
+library(onmaRg)
+devtools::check_win_devel()
+library(onmaRg)
+devtools::check_win_devel()
+library(onmaRg)
+library(onmaRg)
+OnMarg_16_DA_df <- om_data(2016, "DAUID")
+OnMarg_16_DA_sf <- om_geo(2016, "DAUID")
+library(onmaRg)
+library(onmaRg)
+OnMarg_16_DA_df <- om_data(2016, "DAUID")
+OnMarg_16_DA_sf <- om_geo(2016, "DAUID")
+library(onmaRg)
+library(onmaRg)
+OnMarg_16_DA_df <- om_data(2016, "DAUID")
+OnMarg_16_DA_sf <- om_geo(2016, "DAUID")
+devtools::check_win_devel()
+?globalVariables
+?sum
+?om_geo
+?om_data
+?om_geo
+View(OnMarg_16_DA_df)
+?om_data
+library(onmaRg)
+?om_data
+?om_geo
+library(onmaRg)
+?onmaRg
+??onmarg
+?om_geo

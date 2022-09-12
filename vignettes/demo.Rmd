@@ -13,11 +13,9 @@ It is primarily used to quickly and easily load Ontario Marginalization data:
 
 ```{r}
 library(onmaRg)
-library(ggplot2)
-library(sf)
 
-OnMarg_16_DA <- om_data(2016, "DAUID")
+OnMarg_16_DA_df <- om_data(2016, "DAUID")
 
-OnMarg_16_DA <- om_geo(2016, "DAUID")
+OnMarg_16_DA_sf <- om_geo(2016, "DAUID")
 
 ```

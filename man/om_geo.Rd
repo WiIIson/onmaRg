@@ -2,7 +2,7 @@
 % Please edit documentation in R/om_geo.R
 \name{om_geo}
 \alias{om_geo}
-\title{Load OnMarg data}
+\title{Load OnMarg spatial data}
 \usage{
 om_geo(year, level)
 }
@@ -11,15 +11,18 @@ om_geo(year, level)
 
 \item{level}{The level of precision to load, this can be "DAUID", "CTUID", "CSDUID", "CCSUID", "CDUID", "CMAUID", "PHUUID", "LHINUID", or "LHIN_SRUID"}
 }
+\value{
+A sf object containing the Marginalization Index and geographic boundaries for every geographic identifier
+}
 \description{
-This is a function for loading OnMarg data into an sf object for spatial analysis.
+This function combines Public Health Ontario's Ontario Marginalization Index data with Statistics Canada's shape files to create an sf_object.  The sf_object can be used for mapping with packages such as ggplot, and for spatial analysis.
 }
 \details{
 If a year or level is used that does not exist or is not implemented, an error message will be produced.
+If the geometry file is unable to be downloaded, an error message will be produced.
 }
 \examples{
-DA_2016 <- om_geo(2016, "DAUID")
-DA_2011 <- om_geo(2011, "DAUID")
-CSD_2016 <- om_geo(2016, "CSDUID")
-CSD_2011 <- om_geo(2011, "CSDUID")
+\donttest{
+DA_2016_geo <- om_geo(2016, "DAUID")
+}
 }

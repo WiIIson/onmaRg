@@ -1,7 +1,0 @@
-"0","library(onmaRg)"
-"0","library(ggplot2)"
-"0","library(sf)"
-"0",""
-"0","OnMarg_16_DA <- om_data(2016, ""DAUID"")"
-"0",""
-"0","OnMarg_16_DA <- om_geo(2016, ""DAUID"")"
