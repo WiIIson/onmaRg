@@ -1,0 +1,29 @@
+# Notes
+
+## Fourth Sumbission
+
+> Maintainer: 'William Conley <william@cconley.ca>'
+
+As per the R package documentation, this is just a note that this is my first package I have submitted, and it can't be eliminated.
+
+> om_geo: no visible binding for global variable 'geometry'
+>
+> Undefined global functions or variables:
+>
+>  geometry
+
+The second note was fixed by putting the part that uses the geometry data in a try-catch loop
+
+## Third Submission
+
+> Maintainer: 'William Conley <william@cconley.ca>'
+
+As per the R package documentation, this is just a note that this is my first package I have submitted, and it can't be eliminated.
+
+> om_geo: no visible binding for global variable 'geometry'
+>
+> Undefined global functions or variables:
+>
+>  geometry
+
+`om_geo` is an sf object. The `geometry` variable is created by the sf package when it converts the ESRI shapefiles (which contain geometry data).
