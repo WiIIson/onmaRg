@@ -19,7 +19,7 @@ globalVariables(c("geometry"))
 #' @export
 #' @examples
 #' \donttest{
-#' DA_2016_geo <- om_geo(2016, "DAUID")
+#' DA_2016_geo <- om_geo(2016, "DAUID", "sf")
 #' }
 
 om_geo <- function(year, level, format) {
@@ -138,14 +138,13 @@ om_geo <- function(year, level, format) {
       rowMeans()
   })
 
+  # Returns the correct format
   switch(format,
          "sf"={
-           print("Returning as sf")
            return(shape_marg)
          },
          "sp"={
-           print("Returning as sp")
-           return(as(shape_marg, "Spatial"))
+           return(as_Spatial(shape_marg))
          },
          {
            stop("Unrecognized file format used, please specify 'sf' or 'sp'")

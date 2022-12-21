@@ -1,7 +1,7 @@
 Package: onmaRg
 Type: Package
 Title: Import Public Health Ontario's Ontario Marginalization Index
-Version: 0.1.1
+Version: 0.1.2
 Authors@R:
     person("William", "Conley", , "william@cconley.ca", role = c("aut", "cre"))
 Description: The Ontario Marginalization Index is a socioeconomic model that is built on Statistics Canada census data.
