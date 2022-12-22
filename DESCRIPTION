@@ -1,7 +1,7 @@
 Package: onmaRg
 Type: Package
 Title: Import Public Health Ontario's Ontario Marginalization Index
-Version: 0.1.2
+Version: 0.2.1
 Authors@R:
     person("William", "Conley", , "william@cconley.ca", role = c("aut", "cre"))
 Description: The Ontario Marginalization Index is a socioeconomic model that is built on Statistics Canada census data.
@@ -14,7 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.1
-Depends: dplyr, httr, readxl, sf, stringr, utils
+Depends: dplyr, httr, readxl, sf, stringr, utils, stats
 Suggests: 
     knitr,
     rmarkdown

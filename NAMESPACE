@@ -2,9 +2,11 @@
 
 export(om_data)
 export(om_geo)
+export(om_quint)
 import(dplyr)
 import(httr)
 import(readxl)
 import(sf)
+import(stats)
 import(stringr)
 import(utils)
