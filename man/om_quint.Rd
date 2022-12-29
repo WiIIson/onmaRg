@@ -19,7 +19,7 @@ NA values are ignored and left NA
 It can be used to recalculate the quintile scores for subsets of the OnMarg dataset.
 }
 \examples{
-\donttest {
+\dontrun{
 city_data$DEPRIVATION_Q_DA16 <- om_quint(city_data$DEPRIVATION_DA16)
 }
 }

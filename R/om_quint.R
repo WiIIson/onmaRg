@@ -6,10 +6,10 @@
 #'
 #' @param x Vector of values to recalculate quintiles for
 #' @return Vector of quintile scores for each element in the input vector
-#' @import stats
+#' @importFrom stats quantile
 #' @export
 #' @examples
-#' \donttest {
+#' \dontrun{
 #' city_data$DEPRIVATION_Q_DA16 <- om_quint(city_data$DEPRIVATION_DA16)
 #' }
 

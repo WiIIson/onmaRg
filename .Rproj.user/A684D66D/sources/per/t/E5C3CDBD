@@ -1,0 +1,28 @@
+{
+    "id": "E5C3CDBD",
+    "path": "~/Professional Work/onmaRg/man/om_geo.Rd",
+    "project_path": "man/om_geo.Rd",
+    "type": "r_doc",
+    "hash": "327515843",
+    "contents": "",
+    "dirty": false,
+    "created": 1671755247736.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "19,149",
+        "scrollLine": "2"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1664050927,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1664050927,
+    "read_only": true,
+    "read_only_alternatives": [
+        "R/om_geo.R"
+    ]
+}
