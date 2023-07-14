@@ -23,6 +23,7 @@ globalVariables(c("geometry"))
 #' }
 
 om_geo <- function(year, level, format) {
+
   # Initial setup
   year <- toString(year)
   CRS_to_use <- st_crs("+init=EPSG:2962") # NAD83 UTM Zone 17N
@@ -32,49 +33,6 @@ om_geo <- function(year, level, format) {
   # Print warning if requested level does not exist
   if (!level %in% geoLevels) {
     stop(paste0("Level ", level, " is not recognized"))
-  }
-
-
-  # Gets the correct information for a given year
-  switch(year,
-         # stats_url <- URL for the shapefile
-         "2001"={
-           #stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000b01a_e.zip"
-           stop("This year has not yet been implemented")
-         },
-         "2006"={
-           #stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000a06a_e.zip"
-           stop("This year has not yet been implemented")
-         },
-         "2011"={
-           stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000a11a_e.zip"
-         },
-         "2016"={
-           stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/2016/lda_000b16a_e.zip"
-         },
-         "2021"={
-           stat_url <- "https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/files-fichiers/lda_000b21a_e.zip"
-           stop("The onmaRg data for this year is not yet available")
-         },
-         {
-           # Breaks if an invalid ON-Marg year is entered
-           stop("There is no record for year " + year)
-         }
-  )
-
-  # Gets the page name for the given level and year as "page"
-  if (level == "DAUID") {
-    prefix <- "DA"
-  }
-  else {
-    prefix <- level
-  }
-
-  if (year == "2011" || level == "DAUID") {
-    page <- paste0(prefix, "_", year)
-  }
-  else {
-    page <- paste0(year, "_", prefix)
   }
 
   # ============================================================================
@@ -99,7 +57,7 @@ om_geo <- function(year, level, format) {
     tryCatch(
       download.file(url, tempFile, quiet=TRUE, mode="wb"),
       # Creates an error if the file is unable to download
-      error = function(e) stop("Geography file was unable to be downloaded")
+      error = function(e) stop("Geography file could not be downloaded")
     )
 
     extensions <- c(".shp", ".dbf", ".prj", ".shx")
@@ -120,14 +78,8 @@ om_geo <- function(year, level, format) {
   # Processing functions
   # ============================================================================
 
-  process_2011_2016 <- function(year) {
-    # Get url to Stats Canada
-    if (year == "2011") {
-      stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000a11a_e.zip"
-    }
-    else {
-      stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/2016/lda_000b16a_e.zip"
-    }
+  # Process requests from 2011 and 2016
+  process_2011_2016 <- function(year, level, stat_url) {
 
     # Gets the page name for the given level and year as "page"
     if (level == "DAUID") {
@@ -137,20 +89,20 @@ om_geo <- function(year, level, format) {
       prefix <- level
     }
 
+    # Ensures valid page name syntax is used
     if (year == "2011" || level == "DAUID") {
       page <- paste0(prefix, "_", year)
     }
     else {
       page <- paste0(year, "_", prefix)
     }
+
     # Loads a dataframe containing marginalization data
     df1 <- om_data(year, level)
-
 
     # Loads a dataframe containing shape data
     df2 <- extractFromZip(stat_url) %>%
       st_transform(CRS_to_use) #%>%
-
 
     # Summarizes the dataframe if not selecting DAUID
     if (!level == "DAUID") {
@@ -159,10 +111,99 @@ om_geo <- function(year, level, format) {
         summarize(geometry=st_union(geometry))
     }
 
-
     # Merges geographic location with ON-Marg values and returns the data frame
     shape_marg <- merge(df2, df1, by=level)
 
+    # Makes a marginalization index column
+    shape_marg <- mutate(shape_marg, index={
+      shape_marg[,grepl("_Q_", names(shape_marg))] %>%
+        st_drop_geometry() %>%
+        rowMeans()
+    })
+
+    return(shape_marg)
+  }
+
+
+
+  # Process requests from 2021
+  process_2021 <- function(level, url, shp_url) {
+
+    # =========================
+    # Download identifying file
+    # =========================
+
+    # Create tempdir and tempfile
+    tempDir <- tempdir()
+    tempFile <- tempfile()
+
+    # Download the file to tempdir
+    tryCatch(
+      download.file(url, tempFile, quiet=TRUE, mode="wb"),
+      error=function(e) stop("Geography file could not be downloaded")
+    )
+
+    # Unzip downloaded file
+    unzip(tempFile, "2021_92-151_X.csv", exdir=tempDir)
+
+    # Read in unzipped file as a DF and filter for Ontario
+    df1 <- read.csv(paste0(tempDir, "\\2021_92-151_X.csv")) %>%
+      filter(PRNAME_PRNOM == "Ontario")
+
+    # =================
+    # Download SHP file
+    # =================
+
+    df2 <- extractFromZip(shp_url) %>%
+      st_transform(CRS_to_use)
+
+    df2$DAUID <- as.numeric(df2$DAUID)
+
+    # ===================
+    # Format file for use
+    # ===================
+
+    # Combine df1$DAUID_ADIDU with df2$DAUID using a left-join
+    stats_geom <- right_join(df1, df2, by=c("DAUID_ADIDU"="DAUID")) %>%
+      select(
+        # Rename columns to make them similar to 2016/2011 data
+        DAUID = DAUID_ADIDU,
+        PRUID = PRUID_PRIDU,
+        PRNAME = PRNAME_PRNOM,
+        CDUID	= CDUID_DRIDU,
+        CDNAME = CDNAME_DRNOM,
+        CDTYPE = CDTYPE_DRGENRE,
+        CCSUID = CCSUID_SRUIDU,
+        CCSNAME = CCSNAME_SRUNOM,
+        CSDUID = CSDUID_SDRIDU,
+        CSDNAME = CSDNAME_SDRNOM,
+        CSDTYPE = CSDTYPE_SDRGENRE,
+        ERUID = ERUID_REIDU,
+        ERNAME = ERNAME_RENOM,
+        SACCODE = SACCODE_CSSCODE,
+        SACTYPE = SACTYPE_CSSGENRE,
+        CMAUID = CMAUID_RMRIDU,
+        CMAPUID = CMAPUID_RMRPIDU,
+        CMANAME = CMANAME_RMRNOM,
+        CMATYPE = CMATYPE_RMRGENRE,
+        CTUID = CTUID_SRIDU,
+        CTNAME = CTNAME_SRNOM,
+        ADAUID = ADAUID_ADAIDU,
+        geometry
+      ) %>%
+      st_as_sf()
+
+    # Summarizes the dataframe if not selecting DAUID
+    if (!level == "DAUID") {
+      stats_geom <- stats_geom %>%
+        group_by_at(level) %>%
+        summarize(geometry=st_union(geometry))
+    }
+
+    dat_marg <- om_data(2021, level)
+
+    # Merges geographic location with ON-Marg values and returns the data frame
+    shape_marg <- merge(stats_geom, dat_marg, by=level)
 
     # Makes a marginalization index column
     shape_marg <- mutate(shape_marg, index={
@@ -175,36 +216,38 @@ om_geo <- function(year, level, format) {
   }
 
   # ============================================================================
-  # Return function
+  # Main switch
   # ============================================================================
 
-  # Loads a dataframe containing marginalization data
-  df1 <- om_data(year, level)
-
-
-  # Loads a dataframe containing shape data
-  df2 <- extractFromZip(stat_url) %>%
-    st_transform(CRS_to_use) #%>%
-
-
-  # Summarizes the dataframe if not selecting DAUID
-  if (!level == "DAUID") {
-    df2 <- df2 %>%
-      group_by_at(level) %>%
-      summarize(geometry=st_union(geometry))
-  }
-
-
-  # Merges geographic location with ON-Marg values and returns the data frame
-  shape_marg <- merge(df2, df1, by=level)
-
-
-  # Makes a marginalization index column
-  shape_marg <- mutate(shape_marg, index={
-    shape_marg[,grepl("_Q_", names(shape_marg))] %>%
-      st_drop_geometry() %>%
-      rowMeans()
-  })
+  # Process request for a given year
+  switch(year,
+         # stats_url <- URL for the shapefile
+         "2001"={
+           #stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000b01a_e.zip"
+           stop("This year has not yet been implemented")
+         },
+         "2006"={
+           #stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000a06a_e.zip"
+           stop("This year has not yet been implemented")
+         },
+         "2011"={
+           stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/gda_000a11a_e.zip"
+           shape_marg <- process_2011_2016(2011, level, stat_url)
+         },
+         "2016"={
+           stat_url <- "https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/2016/lda_000b16a_e.zip"
+           shape_marg <- process_2011_2016(2016, level, stat_url)
+         },
+         "2021"={
+           stat_url_1 <- "https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/attribute-attribs/files-fichiers/2021_92-151_X.zip"
+           stat_url_2 <- "https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/files-fichiers/lda_000b21a_e.zip"
+           shape_marg <- process_2021(level, stat_url_1, stat_url_2)
+         },
+         {
+           # Breaks if an invalid ON-Marg year is entered
+           stop("There is no record for year " + year)
+         }
+  )
 
   # Returns the correct format
   switch(format,

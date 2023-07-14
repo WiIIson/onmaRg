@@ -1,0 +1,118 @@
+library(onmaRg)
+library(dplyr)
+library(httr)
+library(readxl)
+library(sf)
+library(stringr)
+library(utils)
+
+CRS_to_use <- st_crs("+init=EPSG:2962") # NAD83 UTM Zone 17N
+
+# ============================================================================
+# Helper functions
+# ============================================================================
+
+# Gets the name of a file from its URL
+getFileName <- function(url, extension) {
+  str_extract(url, "\\/([a-z]|[0-9]|_)+.zip") %>%
+    substring(2) %>%
+    str_replace(".zip", ".shp")
+}
+
+
+# Extracts all geographic files from zip
+extractFromZip <- function(url) {
+  tempDir <- tempdir()
+  tempFile <- tempfile()
+
+  filename <- getFileName(url)
+
+  tryCatch(
+    download.file(url, tempFile, quiet=TRUE, mode="wb"),
+    # Creates an error if the file is unable to download
+    error = function(e) stop("Geography file could not be downloaded")
+  )
+
+  extensions <- c(".shp", ".dbf", ".prj", ".shx")
+  for (extension in extensions) {
+    filename <- str_extract(url, "\\/([a-z]|[0-9]|_)+.zip") %>%
+      substring(2) %>%
+      str_replace(".zip", extension)
+
+    unzip(tempFile, filename, exdir=tempDir)
+  }
+
+  filepath <- paste0(tempDir, "/", filename)
+
+  return(st_read(filepath))
+}
+
+# ==============================================================================
+# Download identifying file
+# ==============================================================================
+
+url <- "https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/attribute-attribs/files-fichiers/2021_92-151_X.zip"
+
+# Create tempdir and tempfile
+tempDir <- tempdir()
+tempFile <- tempfile()
+
+# Download the file to tempdir
+tryCatch(
+  download.file(url, tempFile, quiet=TRUE, mode="wb"),
+  error=function(e) stop("Geography file could not be downloaded")
+)
+
+# Unzip downloaded file
+unzip(tempFile, "2021_92-151_X.csv", exdir=tempDir)
+
+# Read in unzipped file as a DF and filter for Ontario
+df1 <- read.csv(paste0(tempDir, "\\2021_92-151_X.csv")) %>%
+  filter(PRNAME_PRNOM == "Ontario")
+
+# ==============================================================================
+# Download SHP file
+# ==============================================================================
+
+shp_url <- "https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/files-fichiers/lda_000b21a_e.zip"
+
+df2 <- extractFromZip(shp_url) %>%
+  st_transform(CRS_to_use)
+
+df2$DAUID <- as.numeric(df2$DAUID)
+
+# ==============================================================================
+# Format file for use
+# ==============================================================================
+
+# Combine df1$DAUID_ADIDU with df2$DAUID using a left-join
+# and filter for Toronto
+stats_geom <- right_join(df1, df2, by=c("DAUID_ADIDU"="DAUID")) %>%
+  filter(CMANAME_RMRNOM == "Toronto") %>%
+  select(
+    DAUID = DAUID_ADIDU,
+    PRUID = PRUID_PRIDU,
+    PRNAME = PRNAME_PRNOM,
+    CDUID	= CDUID_DRIDU,
+    CDNAME = CDNAME_DRNOM,
+    CDTYPE = CDTYPE_DRGENRE,
+    CCSUID = CCSUID_SRUIDU,
+    CCSNAME = CCSNAME_SRUNOM,
+    CSDUID = CSDUID_SDRIDU,
+    CSDNAME = CSDNAME_SDRNOM,
+    CSDTYPE = CSDTYPE_SDRGENRE,
+    ERUID = ERUID_REIDU,
+    ERNAME = ERNAME_RENOM,
+    SACCODE = SACCODE_CSSCODE,
+    SACTYPE = SACTYPE_CSSGENRE,
+    CMAUID = CMAUID_RMRIDU,
+    CMAPUID = CMAPUID_RMRPIDU,
+    CMANAME = CMANAME_RMRNOM,
+    CMATYPE = CMATYPE_RMRGENRE,
+    CTUID = CTUID_SRIDU,
+    CTNAME = CTNAME_SRNOM,
+    ADAUID = ADAUID_ADAIDU,
+    geometry
+  ) %>%
+  st_as_sf()
+
