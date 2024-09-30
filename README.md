@@ -1,4 +1,4 @@
-# onmaRg Library <img src="HexSticker.png"  width="100" height="110" align="right">
+# onmaRg Library <img src="hexsticker.png"  width="100" height="110" align="right">
 
 ## Purpose
 
