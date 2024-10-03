@@ -1,42 +1,40 @@
-# onmaRg Library <img src="hexsticker.png"  width="100" height="110" align="right">
+# onmaRg Package <img src="hexsticker.png"  width="100" height="110" align="right">
 
 ## Purpose
 
-onmaRg is an R library that takes care of loading and merging Ontario Marginalization data. This includes functions for automatically creating dataframes containing marginalization data joined with geographic data, allowing the spatial analysis of this data to be more accessible.
+**onmaRg** is an R package designed to simplify the process of accessing and merging Ontario Marginalization data for spatial analysis. The library offers functions that seamlessly join marginalization data with geographic data, enabling researchers and analysts to work more efficiently with socio-economic datasets.
 
-onmaRg takes all of it's data directly off of the government websites and merges them into a dataframe without creating any permanant local files.
+onmaRg retrieves data directly from government sources, merging them into data frames without creating any local files. This makes it easier to conduct spatial analysis without the need for manual data handling or file management.
 
 ## Background
 
-The Ontario Marginalization Index is a data model that has been developed and maintained by Ontario Public Health and St. Michael's Hospital. This data model is constructed with the four domains of Residential Instability, Material Deprivation, Dependency and Ethnic Concentration which describe different aspects of marginalization that is experienced by communities. This data is available as a decimal, as well as in quintiles from 1 to 5 (5 being the highest level of that measurement, e.g.: deprivation 5 is the highest level of deprivation).
+The **Ontario Marginalization Index** is a data model developed and maintained by Ontario Public Health in collaboration with St. Michael's Hospital. It assesses marginalization across four key domains: Residential Instability, Material Deprivation, Dependency, and Ethnic Concentration. These domains capture various dimensions of marginalization experienced by communities. The data is available both as continuous decimal values and in quintiles (1 to 5), where 5 represents the highest level of marginalization for that domain (e.g., a score of 5 in deprivation indicates the highest level of deprivation).
 
-Statistics Canada has a database shapefiles on the geographic boundaries of all of Canada. This includes many levels that can go as precisely as Dissemination Areas.
+In addition to this, Statistics Canada provides geographic boundary shapefiles for all of Canada, which include precise geographic units, such as Dissemination Areas.
 
-onmaRg draws from both of these sources to create a shapefile that also contains marginalization data for each mapped space. This makes it much easier to work with this data and represent it visually, automating the process of downloading the different files, cleaning them and joining them together in a format that can be analyzed.
+**onmaRg** combines data from both these sources to create shapefiles that incorporate marginalization data for each geographic unit. This automation streamlines the process of downloading, cleaning, and merging files, making it significantly easier to analyze and visualize spatial data.
 
-In addition, onmaRg also calculates an index score based on the five quintiles as an overall average score between each dimension.
+**onmaRg** also calculates an overall index score by averaging the quintile scores across the four domains, providing a comprehensive measure of marginalization for each area.
 
 ## Available Data
 
-The Ontario Marginalization Index has released marginalization information on several levels every five years starting in 2001.
-
-onmaRg can retrieve data from the following years:
+The **Ontario Marginalization Index** publishes marginalization data every five years, starting from 2001. Currently, onmaRg can retrieve data from the following years:
 - 2011
 - 2016
-- 2021 - Pending
+- 2021
 
-onmaRg can retrieve data from the following levels:
-- DAUID
-- CTUID
-- CSDUID
-- CCSUID
-- CDUID
-- CMAUID
-- PHUUID
-- LHINUID
-- LHIN_SRUID
+Additionally, **onmaRg** supports data retrieval at various geographic levels, including:
+- DAUID (Dissemination Area)
+- CTUID (Census Tract)
+- CSDUID (Census Subdivision)
+- CCSUID (Census Consolidated Subdivision)
+- CMAUID (Census Metropolitan Area)
+- CDUID (Census Division)
+- PHUUID (Public Health Unit)
+- LHIN_SRUID (Local Health Integration Network Sub-Region)
+- LHINUID (Local Health Integration Network)
 
-onmaRg will be updated every time a new dataset comes out to keep it relevant. The years 2001 and 2006 have been excluded due to differences in formatting, but will be made available in future versions.
+**onmaRg** will be updated with each new data release to ensure it remains current. The 2001 and 2006 datasets have been excluded due to formatting differences, but they will be included in future versions.
 
 ## Usage
 
@@ -56,3 +54,27 @@ ggplot() +
     coord_sf()
 ```
 ![](Example1.jpg)
+
+---
+
+## Citations
+
+Matheson FI (Unity Health Toronto), Moloney G (Unity Health Toronto), van Ingen T (Public Health Ontario). 2021 Ontario marginalization index: user guide. Toronto, ON: St. Michael’s Hospital (Unity Health Toronto); 2023. Joint publication with Public Health Ontario.
+
+Government of Canada, Statistics Canada. (2021, November 17). List of 2021 census boundary files depicting boundaries of 2021 census standard geographic areas for which census data are available. 2021 Census Boundary files. https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/index2021-eng.cfm?year=21
+
+Government of Canada, S. C. (2022, February 10). 2021 census. Geographic Attribute File. https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/attribute-attribs/index2021-eng.cfm
+
+**How to cite this package:**
+
+```bibtex
+@software{Conley_onmaRg_2024,
+  author = {Conley, William},
+  month = {10},
+  title = {{onmaRg Package}},
+  url = {https://github.com/WiIIson/onmaRg},
+  version = {1.0.3},
+  year = {2024},
+  note = "{\tt william@cconley.ca}"
+}
+```
