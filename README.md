@@ -8,7 +8,7 @@ onmaRg retrieves data directly from government sources, merging them into data f
 
 ## Background
 
-The **Ontario Marginalization Index** is a data model developed and maintained by Ontario Public Health in collaboration with St. Michael's Hospital. It assesses marginalization across four key domains: Residential Instability, Material Deprivation, Dependency, and Ethnic Concentration. These domains capture various dimensions of marginalization experienced by communities. The data is available both as continuous decimal values and in quintiles (1 to 5), where 5 represents the highest level of marginalization for that domain (e.g., a score of 5 in deprivation indicates the highest level of deprivation).
+The [**Ontario Marginalization Index**](https://www.publichealthontario.ca/en/Data-and-Analysis/Health-Equity/Ontario-Marginalization-Index) is a data model developed and maintained by Ontario Public Health in collaboration with St. Michael's Hospital. It assesses marginalization across four key domains: Residential Instability, Material Deprivation, Dependency, and Ethnic Concentration. These domains capture various dimensions of marginalization experienced by communities. The data is available both as continuous decimal values and in quintiles (1 to 5), where 5 represents the highest level of marginalization for that domain (e.g., a score of 5 in deprivation indicates the highest level of deprivation).
 
 In addition to this, Statistics Canada provides geographic boundary shapefiles for all of Canada, which include precise geographic units, such as Dissemination Areas.
 
