@@ -1,5 +1,8 @@
 # onmaRg Package <img src="hexsticker.png"  width="100" height="110" align="right">
 
+![Downloads](https://cranlogs.r-pkg.org/badges/onmaRg)
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/onmaRg)
+
 ## Purpose
 
 **onmaRg** is an R package designed to simplify the process of accessing and merging Ontario Marginalization data for spatial analysis. The library offers functions that seamlessly join marginalization data with geographic data, enabling researchers and analysts to work more efficiently with socio-economic datasets.
